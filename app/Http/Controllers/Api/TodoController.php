@@ -261,7 +261,7 @@ class TodoController extends Controller
         try {
             $todo = Todo::find($id);
 
-            if (!$todo && $todo->user_id !== Auth::user()->id) {
+            if (!$todo || $todo->user_id !== Auth::user()->id) {
                 return $this->sendError('Todo not found', 404);
             }
 
@@ -387,8 +387,8 @@ class TodoController extends Controller
             DB::beginTransaction();
 
             $todo = Todo::find($id);
-
-            if (!$todo && $todo->user_id !== Auth::user()->id) {
+            
+            if (!$todo || $todo->user_id !== Auth::user()->id) {
                 return $this->sendError('Todo not found', 404);
             }
 
@@ -473,8 +473,8 @@ class TodoController extends Controller
             DB::beginTransaction();
 
             $todo = Todo::find($id);
-
-            if (!$todo && $todo->user_id !== Auth::user()->id) {
+            
+            if (!$todo || $todo->user_id !== Auth::user()->id) {
                 return $this->sendError('Todo not found', 404);
             }
 
