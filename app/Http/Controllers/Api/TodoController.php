@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\ResponseTrait;
 use App\Models\Todo;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -85,7 +86,7 @@ class TodoController extends Controller
     {
         try {
             $perPage = $request->get('per_page', 10);
-            $todos = Todo::orderBy('created_at','desc')->paginate($perPage);
+            $todos = Todo::where('user_id',Auth::user()->id)->orderBy('created_at','desc')->paginate($perPage);
 
             return $this->sendResponse('Todos retrieved successfully!', $todos);
         } catch (\Exception $exception) {
@@ -186,6 +187,7 @@ class TodoController extends Controller
 
             $todo = new Todo();
             $todo->title = $request->title;
+            $todo->user_id = Auth::user()->id;
             $todo->description = $request->description;
 
             if ($request->hasFile('file')) {
@@ -259,7 +261,7 @@ class TodoController extends Controller
         try {
             $todo = Todo::find($id);
 
-            if (!$todo) {
+            if (!$todo && $todo->user_id !== Auth::user()->id) {
                 return $this->sendError('Todo not found', 404);
             }
 
@@ -386,7 +388,7 @@ class TodoController extends Controller
 
             $todo = Todo::find($id);
 
-            if (!$todo) {
+            if (!$todo && $todo->user_id !== Auth::user()->id) {
                 return $this->sendError('Todo not found', 404);
             }
 
@@ -472,7 +474,7 @@ class TodoController extends Controller
 
             $todo = Todo::find($id);
 
-            if (!$todo) {
+            if (!$todo && $todo->user_id !== Auth::user()->id) {
                 return $this->sendError('Todo not found', 404);
             }
 
